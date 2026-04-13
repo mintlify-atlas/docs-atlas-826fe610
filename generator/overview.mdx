@@ -1,0 +1,57 @@
+---
+title: "Tints.dev Generator: palette creation overview"
+description: "Learn how the Tints.dev generator interface works — from entering a hex color to tweaking HSL parameters and copying your Tailwind config."
+---
+
+The Tints.dev generator is a browser-based palette builder that takes a single hex color and produces a complete 11-stop scale (50–950) ready to paste into your Tailwind CSS config. This page introduces the interface panels, describes the end-to-end workflow, and links to detailed pages for each control group.
+
+## Generator interface
+
+The generator page is divided into three horizontal bands for each palette:
+
+- **Inputs row** — palette name, hex color value, a color-picker button, and the stop selector.
+- **Tweak controls row** — numeric inputs for hue shift, saturation boost, lightness maximum, and lightness minimum, plus the perceived/linear color mode toggle.
+- **Swatch row** — the 11 generated swatches (50 to 950) rendered side by side. Click any swatch to make it the base stop.
+
+Below all palettes, the **output panel** shows the generated Tailwind config snippet in your chosen format (oklch, hex, hsl, or display-p3) for either Tailwind v3 or v4.
+
+## Workflow
+
+<Steps>
+  <Step title="Enter a hex color">
+    Type a 6-character hex value (without `#`) into the **Value** input, or click the color-picker button to choose visually. The generator validates the input and rejects anything that isn't a full 6-digit hex color.
+  </Step>
+  <Step title="Auto stop detection">
+    In the default **auto** mode, the generator immediately analyzes the color's lightness and maps it to the nearest Tailwind stop (50–950). A bright color lands near 100; a dark color lands near 800. The active stop is highlighted in the swatch row.
+  </Step>
+  <Step title="View the 11 swatches">
+    The swatch row updates instantly. Each swatch shows its stop number and hex value. The base stop (the one matching your input) is outlined.
+  </Step>
+  <Step title="Adjust HSL tweaks">
+    Use the **Hue**, **Saturation**, **Lightness Maximum**, and **Lightness Minimum** inputs to fine-tune the palette. Changes update the swatch row in real time.
+  </Step>
+  <Step title="Copy the config">
+    In the output panel, select your Tailwind version and color format, then click the clipboard icon to copy the snippet.
+  </Step>
+</Steps>
+
+## Multiple palettes
+
+You can run more than one palette at the same time. Click **Add Palette** at the bottom of the page to append a new palette row. Each palette has independent name, value, tweak, and stop settings. The output panel combines all active palettes into a single config snippet — useful when you need a primary and a neutral scale together.
+
+## Explore each control
+
+<CardGroup cols={2}>
+  <Card title="Color input and stop selection" icon="hashtag" href="/generator/color-input">
+    How to enter hex values, use the color picker, and control which stop the input color maps to.
+  </Card>
+  <Card title="HSL tweak controls" icon="sliders" href="/generator/hsl-tweaks">
+    How hue shift, saturation boost, and lightness min/max shape the palette curve.
+  </Card>
+  <Card title="Perceived vs linear color mode" icon="eye" href="/generator/color-modes">
+    The difference between HSLuv (perceived) and standard HSL (linear) and when to use each.
+  </Card>
+  <Card title="Output formats" icon="file-code" href="/generator/output-formats">
+    oklch, hex, hsl, and display-p3 outputs for Tailwind v3 and v4.
+  </Card>
+</CardGroup>

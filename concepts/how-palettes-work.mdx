@@ -1,0 +1,73 @@
+---
+title: "How Tints.dev generates perceptual color palettes"
+description: "A look at the three-step algorithm behind Tints.dev — hue shift, saturation boost, and lightness distribution — and how HSLuv and HSL differ."
+---
+
+Tints.dev builds each palette algorithmically: you provide a single hex color, and the generator derives every other stop by applying controlled shifts to hue, saturation, and lightness. The result is a cohesive 11-stop scale where your input color sits at its designated stop and all surrounding stops follow a predictable, tunable distribution. This approach was inspired by the palette-construction principles in [Refactoring UI](https://refactoringui.com/book/) by Adam Wathan & Steve Schoger.
+
+## The three-step generation process
+
+Each palette is computed in three passes over all stops (including internal anchors 0 and 1000). The results are combined per-stop to produce the final color.
+
+<Steps>
+  <Step title="Hue scale">
+    Every stop receives a hue offset proportional to its distance from the base stop. The distance is measured in index positions within the stop array, then multiplied by the **hue tweak** (`h`) parameter.
+
+    ```
+    hTweak = indexDistance × h
+    ```
+
+    Stops closer to the base stop receive a smaller hue shift; stops further away receive a larger one. Setting `h` to `0` keeps the hue constant across all stops.
+  </Step>
+  <Step title="Saturation scale">
+    Each stop's saturation is boosted by an amount that grows exponentially with distance from the base stop. The formula applies an increasing multiplier so that the palette's tints and shades gain more saturation the further they are from the base.
+
+    ```
+    sTweak = round((indexDistance + 1) × s × (1 + indexDistance / 10))
+    ```
+
+    The result is clamped to a maximum of 100. Setting `s` to `0` keeps saturation flat across all stops.
+  </Step>
+  <Step title="Lightness distribution">
+    Lightness is distributed using three anchor points and linear interpolation between them:
+
+    | Anchor | Stop | Value |
+    |--------|------|-------|
+    | Light end | 0 | `lMax` |
+    | Base color | `valueStop` | Lightness of your input hex |
+    | Dark end | 1000 | `lMin` |
+
+    Stops between 0 and `valueStop` are interpolated between `lMax` and the base lightness. Stops between `valueStop` and 1000 are interpolated between the base lightness and `lMin`.
+
+    Adjusting `lMin` and `lMax` controls how close the darkest and lightest stops approach pure black and pure white.
+  </Step>
+</Steps>
+
+## Color space: perceived vs. linear
+
+The lightness distribution step works differently depending on which color mode you choose. The hue and saturation steps are identical in both modes.
+
+<Tabs>
+  <Tab title="Perceived (HSLuv)">
+    In perceived mode, Tints.dev uses [HSLuv](https://www.hsluv.org/) — a perceptually uniform color space built on top of CIE LUV. Lightness values in HSLuv correspond closely to how the human visual system experiences brightness, so equal numeric steps in the lightness scale produce palette stops that look equally spaced to the eye.
+
+    This is the default mode and produces the most visually balanced palettes.
+
+    Auto stop detection in perceived mode uses **luminance** to determine which stop best matches your input hex.
+  </Tab>
+  <Tab title="Linear (HSL)">
+    In linear mode, Tints.dev uses standard cylindrical HSL. The lightness value is taken directly from the HSL representation of your input color, and the same three-anchor interpolation is applied.
+
+    HSL is simpler and more predictable for colors where perceptual uniformity is less important, but the resulting palette may appear uneven — particularly near the light and dark extremes.
+
+    Auto stop detection in linear mode uses **HSL lightness** to determine the best-matching stop.
+  </Tab>
+</Tabs>
+
+## Exact color preservation
+
+Whatever hex value you enter, Tints.dev guarantees that the base stop in the output matches it exactly. No rounding or color-space conversion affects the base stop — the input hex is written directly into the palette at `valueStop`.
+
+<Note>
+  Automated tools like Tints.dev are a fast-track starting point for palette creation. The algorithm gets you to a solid baseline quickly, but hand-tuning individual stops — or adjusting the hue, saturation, and lightness parameters — often yields a more polished result for production use. Refactoring UI makes the same recommendation.
+</Note>

@@ -1,0 +1,69 @@
+---
+title: "Tints.dev API: no authentication or API key needed"
+description: "The Tints.dev API is open and free — no API key, token, or account needed. Cache responses to reduce load and be a good API citizen."
+---
+
+The Tints.dev API requires no authentication. There are no API keys, tokens, bearer headers, or sign-up flows. You can send a request to any endpoint right now without any credentials.
+
+## No auth required
+
+Every API endpoint is publicly accessible. You do not need to:
+
+- Create an account
+- Generate an API key
+- Pass any `Authorization` header
+- Include any token in query parameters
+
+A basic request looks like this:
+
+```bash
+curl "https://tints.dev/api/palette/v1:Ymx1ZXwzQjgyRjZ8NTAwfHB8MHwwfDB8MTAwfGE"
+```
+
+No headers. No tokens. That's it.
+
+## Rate limits
+
+The API does not publish explicit rate limits. It is a free, open service maintained by an open-source project. Treat it accordingly — avoid sending unnecessary or redundant requests.
+
+<Warning>
+Sending high volumes of automated requests without caching may degrade service for other users. Follow the best practices below to be a responsible consumer.
+</Warning>
+
+## Best practices
+
+### Cache responses on your end
+
+All API responses include a one-week cache header:
+
+```
+Cache-Control: max-age=604800, s-maxage=604800
+```
+
+Once you have fetched a palette, store the result. Palette hashes are deterministic — the same hash always produces the same output — so there is no reason to fetch it more than once.
+
+### Generate palettes at build time for static sites
+
+If you are using the API in a static site generator (Next.js, Astro, Eleventy, etc.), fetch palettes during the build process rather than at runtime. This eliminates runtime latency and reduces the number of live requests.
+
+### Combine multiple palettes into a single request
+
+The hash format supports encoding multiple palettes in one URL. Instead of making a separate request for each color, build a multi-palette in the generator (click **Add Palette**) and copy the resulting hash URL — it encodes all palettes together. Make one request instead of many. See [sharing palettes](/concepts/sharing-palettes) for details on the hash format.
+
+### Use the hash endpoint, not the name/value endpoint
+
+The `/api/:name/:value` endpoint issues a permanent `301` redirect to the hash URL. If you know the hash, use `/api/palette/:hash` directly to avoid the redirect round-trip.
+
+<Note>
+The Tints.dev API is provided free of charge as part of an open-source project. If your team relies on it heavily, consider contributing back — whether through code, bug reports, or a GitHub star at [github.com/SimeonGriggs/tints.dev](https://github.com/SimeonGriggs/tints.dev).
+</Note>
+
+## Content type
+
+All responses are `application/json`:
+
+```
+Content-Type: application/json; charset=utf-8
+```
+
+There is no content negotiation — the API always returns JSON regardless of the `Accept` header sent by the client.

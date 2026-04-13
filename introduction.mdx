@@ -1,0 +1,74 @@
+---
+title: "Introduction to Tints.dev palette generator"
+description: "Tints.dev is a free web tool and REST API that generates 11-stop Tailwind CSS color palettes from a single hex value, with no sign-up required."
+---
+
+Tints.dev is a free palette generator and REST API for Tailwind CSS. Enter a single hex color and it produces a complete 11-stop scale — stops 50 through 950 — ready to paste into your Tailwind v3 config or v4 CSS file. This page explains what Tints.dev is, how it works, and where to go next.
+
+<Tip>
+  The REST API is completely free and requires no API key or account. Fetch any palette with a single GET request.
+</Tip>
+
+## What Tints.dev does
+
+Starting from one hex value, Tints.dev calculates a perceptually-balanced color scale across 11 stops: `50`, `100`, `200`, `300`, `400`, `500`, `600`, `700`, `800`, `900`, and `950`. This matches the structure of Tailwind CSS's own built-in palettes, so the output slots directly into your config without any reformatting.
+
+You can use Tints.dev in two ways:
+
+- **Web generator** — visit [tints.dev](https://tints.dev), enter a hex color, adjust controls, and copy the output.
+- **REST API** — send a GET request and receive palette data in JSON, without any authentication.
+
+## Key concepts
+
+### 11 stops (50–950)
+
+Every palette has exactly 11 stops, from near-white at `50` to near-black at `950`. The stops mirror Tailwind's default palette range, so generated palettes integrate seamlessly alongside built-in colors like `blue` or `slate`.
+
+### Single hex input
+
+You provide one hex color — your base or brand color — and Tints.dev derives the full scale from it. By default the input color lands at stop `500`, but you can move it to any stop from `50` to `950`.
+
+### Two color modes
+
+| Mode | Description |
+|---|---|
+| **Perceived** (default) | Uses HSLuv, a perceptually-uniform color space. Lightness changes look consistent to the human eye across the scale. |
+| **Linear** | Uses standard HSL math. Faster to reason about numerically, but lightness distribution may appear uneven at extremes. |
+
+### Output formats
+
+Tints.dev supports four output formats:
+
+| Format | Example |
+|---|---|
+| `oklch` | `oklch(63.3% 0.189 259.8)` |
+| `hex` | `#3B82F6` |
+| `hsl` | `hsl(217, 91%, 60%)` |
+| `p-3` | `color(display-p3 0.23 0.51 0.96)` |
+
+Choose the format that matches your project's CSS requirements. `oklch` is the default and recommended for Tailwind v4 projects.
+
+### HSL tweaks
+
+The generator exposes three optional controls to refine the palette:
+
+- **Hue shift** — rotate hue away from the base color as stops get lighter or darker.
+- **Saturation boost** — increase saturation at extreme stops to keep colors vivid.
+- **Lightness range** — set minimum and maximum lightness bounds to control how light or dark the endpoints get.
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Quick start" icon="rocket" href="/quickstart">
+    Generate your first palette and add it to your Tailwind project in minutes.
+  </Card>
+  <Card title="Using the generator" icon="palette" href="/generator/overview">
+    Learn the generator controls — color input, HSL tweaks, color modes, and export options.
+  </Card>
+  <Card title="API reference" icon="code" href="/api/introduction">
+    Fetch palettes programmatically via the REST API — no auth required.
+  </Card>
+  <Card title="How palettes work" icon="lightbulb" href="/concepts/how-palettes-work">
+    Understand the math behind perceptually-balanced color scales.
+  </Card>
+</CardGroup>

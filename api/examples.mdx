@@ -1,0 +1,104 @@
+---
+title: "Tints.dev API examples: curl, JavaScript, and Node.js"
+description: "Practical code examples for fetching Tints.dev palettes with curl, JavaScript fetch, Node.js build scripts, and the legacy name/value endpoint."
+---
+
+These examples show how to call the Tints.dev REST API from the command line and from JavaScript. All examples use the canonical hash-based endpoint (`/api/palette/:hash`) which is stable, cacheable, and requires no authentication. See the [API overview](/api/introduction) for a full description of the available endpoints and response format.
+
+<Note>
+  The hash URL for any palette is shown in your browser's address bar when you have a palette open on tints.dev. Copy the current page URL to get a ready-to-use API URL — just swap `tints.dev/palette/` for `tints.dev/api/palette/`.
+</Note>
+
+## Example 1: Fetch a palette with curl
+
+The simplest way to fetch a palette is a single `curl` command. Pass `?output=hex` to get plain hex values instead of the default oklch format.
+
+```bash
+curl "https://tints.dev/api/palette/v1:Ymx1ZXwzQjgyRjZ8NTAwfHB8MHwwfDB8MTAwfGE?output=hex"
+```
+
+The response is a JSON object keyed by color name:
+
+```json
+{
+  "blue": {
+    "50": "#EFF6FF",
+    "100": "#DBEAFE",
+    "200": "#BFDBFE",
+    "300": "#93C5FD",
+    "400": "#60A5FA",
+    "500": "#3B82F6",
+    "600": "#2563EB",
+    "700": "#1D4ED8",
+    "800": "#1E40AF",
+    "900": "#1E3A8A",
+    "950": "#172554"
+  }
+}
+```
+
+## Example 2: Fetch in JavaScript
+
+Use the Fetch API in the browser or in Node.js (v18+) to retrieve a palette and access individual stop values.
+
+```javascript
+const response = await fetch(
+  'https://tints.dev/api/palette/v1:Ymx1ZXwzQjgyRjZ8NTAwfHB8MHwwfDB8MTAwfGE?output=hex'
+);
+const palette = await response.json();
+
+console.log(palette.blue[500]); // "#3B82F6"
+console.log(palette.blue[50]);  // "#EFF6FF"
+```
+
+## Example 3: Build script (Node.js)
+
+Use this pattern in a build script or code generation step to fetch a palette and consume it programmatically — for example, to write it into a config file or pass it to a design token pipeline.
+
+```javascript generate-colors.mjs
+const PALETTE_HASH = 'v1:Ymx1ZXwzQjgyRjZ8NTAwfHB8MHwwfDB8MTAwfGE';
+
+async function fetchPalette(hash, format = 'oklch') {
+  const url = `https://tints.dev/api/palette/${hash}?output=${format}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`Failed to fetch palette: ${res.status}`);
+  return res.json();
+}
+
+const colors = await fetchPalette(PALETTE_HASH, 'hex');
+console.log(JSON.stringify(colors, null, 2));
+```
+
+Run it with:
+
+```bash
+node generate-colors.mjs
+```
+
+<Note>
+  API responses are cached for one week at both the client and CDN level. Fetching the same hash URL multiple times will hit the CDN cache after the first request. Cache the response in your own application to avoid redundant network calls during builds.
+</Note>
+
+## Example 4: Legacy name/value endpoint
+
+The `/api/:name/:value` endpoint accepts a color name and hex value directly. It returns a **301 permanent redirect** to the equivalent hash URL, so use the `-L` flag with curl (or follow redirects in your HTTP client) to receive the palette data.
+
+<CodeGroup>
+
+```bash curl
+curl -L "https://tints.dev/api/blue/3B82F6?output=hex"
+```
+
+```javascript JavaScript
+// The Fetch API follows redirects automatically
+const response = await fetch('https://tints.dev/api/blue/3B82F6?output=hex');
+const palette = await response.json();
+```
+
+</CodeGroup>
+
+Because the redirect is permanent (301), you can use this endpoint once to discover the canonical hash URL for a palette, then hardcode the hash URL in your code for stable, long-term caching.
+
+<Tip>
+  The easiest way to get the hash URL for a palette you've built in the generator is to copy the address bar URL from tints.dev, then replace `/palette/` with `/api/palette/`. The hash encodes all of your palette settings, so the URL is stable as long as you don't change the generator inputs.
+</Tip>

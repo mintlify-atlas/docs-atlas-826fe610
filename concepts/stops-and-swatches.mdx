@@ -1,0 +1,58 @@
+---
+title: "Color stops and swatches: 50 to 950 explained"
+description: "How Tailwind CSS stop numbers map to palette positions, what the base stop is, and how Tints.dev auto-detects the right stop for your color."
+---
+
+Tailwind CSS organizes each color palette into numbered stops — 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, and 950 — where lower numbers produce lighter colors and higher numbers produce darker ones. Tints.dev generates all 11 of these stops from a single hex input, plus two internal calculation anchors (0 and 1000) that are never included in output.
+
+## The full stop scale
+
+Internally, Tints.dev operates on 13 positions:
+
+```
+[0, 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950, 1000]
+```
+
+Stops `0` and `1000` are calculation anchors that set the `lMax` and `lMin` lightness bounds. They are filtered out before any output is produced. The remaining 11 stops are what appear in your Tailwind config.
+
+| Stop | Typical role |
+|------|-------------|
+| 50 | Near-white tint — backgrounds, hover states on light surfaces |
+| 100 | Very light tint — subtle backgrounds, disabled state fills |
+| 200 | Light tint — borders on light backgrounds, inactive UI elements |
+| 300 | Light-medium — placeholder text, decorative dividers |
+| 400 | Medium — secondary text, muted icons |
+| 500 | Mid-scale — often the "default" brand color for most palettes |
+| 600 | Medium-dark — primary action text, focused outlines |
+| 700 | Dark — body text on light backgrounds, strong emphasis |
+| 800 | Very dark — headings, high-contrast text |
+| 900 | Near-black — strongest foreground, dark surface backgrounds |
+| 950 | Deepest shade — near-black, dark mode surface colors |
+
+## The base stop
+
+The **base stop** (`valueStop`) is the stop at which your input hex color appears exactly, without any modification. All other stops are derived from it.
+
+The default base stop is **500**, following Tailwind's convention of placing the "main" brand color in the middle of the scale. You can change it to any stop from 50 to 950.
+
+### Auto vs. manual stop selection
+
+Tints.dev supports two modes for setting the base stop:
+
+<Tabs>
+  <Tab title="Auto (default)">
+    When stop selection is set to **auto**, Tints.dev analyzes your input hex and finds the stop that best represents its brightness:
+
+    - In **perceived mode**, it measures the color's **luminance** and compares it against a baseline palette.
+    - In **linear mode**, it measures **HSL lightness** and does the same comparison.
+
+    The stop whose baseline value is closest to your color's value is chosen automatically. This means a near-white hex gets placed near stop 50, and a near-black hex gets placed near stop 900.
+  </Tab>
+  <Tab title="Manual">
+    When stop selection is set to **manual**, the base stop is set to whatever `valueStop` you specify. The algorithm still preserves your exact hex at that position, but does not attempt to validate whether the stop matches the color's perceived brightness.
+  </Tab>
+</Tabs>
+
+<Tip>
+  If your brand color is already a dark shade — deep navy, forest green, dark burgundy — set the base stop to 700 or 800 before generating. This prevents the lighter stops from being unnaturally pale and the darker stops from collapsing toward black.
+</Tip>

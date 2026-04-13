@@ -1,0 +1,72 @@
+---
+title: "Color input and stop selection in Tints.dev"
+description: "How to enter a hex color into the generator, use the color picker, and control which Tailwind stop your input color is assigned to."
+---
+
+Every palette starts with a single hex color. Tints.dev uses that color as the anchor for the full 11-stop scale — the stops above it get progressively lighter and the stops below get progressively darker. This page explains how to enter a color, how the generator validates it, and how stop assignment works.
+
+## Entering a hex color
+
+Type a 6-character hexadecimal value directly into the **Value** input. Do not include the `#` prefix — the field adds it automatically.
+
+```text
+Valid examples
+3B82F6   ← Tailwind blue-500
+EF4444   ← Tailwind red-500
+1E3A5F   ← custom dark navy
+F5F0E8   ← custom warm off-white
+```
+
+The generator validates every keystroke using this rule: the value must match `/^#[0-9A-F]{6}$/i` (exactly 6 hex digits, case-insensitive). While the input contains fewer than 6 valid characters the palette is not recomputed, so you can type freely without seeing intermediate states.
+
+<Note>
+  Shorthand 3-digit hex values (e.g. `F60`) are not accepted. Always use the full 6-digit form.
+</Note>
+
+## Color picker
+
+Next to the **Value** input is a small color swatch button. Clicking it opens a native browser color picker. As you drag the picker the hex input and swatch row update in real time. The picker and the text input are always in sync — changing one updates the other.
+
+## Auto stop detection
+
+When **stopSelection** is set to `auto` (the default), the generator calculates which Tailwind stop your color belongs to as soon as a valid hex is entered.
+
+The algorithm compares the color's perceptual brightness against a reference palette and finds the stop whose brightness is closest:
+
+- In **perceived** mode, it uses the WCAG relative luminance of the color (scaled 0–100).
+- In **linear** mode, it uses the HSL lightness value (also scaled 0–100).
+
+The result is one of the 11 standard stops: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, or 950. The matching stop is highlighted with an outline in the swatch row.
+
+| Color brightness | Expected auto stop |
+| ---------------- | ------------------ |
+| Very light (near white) | 50 or 100 |
+| Light | 200 or 300 |
+| Mid-range | 400 or 500 |
+| Dark | 600 or 700 |
+| Very dark (near black) | 800, 900, or 950 |
+
+## Manual stop override
+
+To pin the input color to a specific stop regardless of its brightness, click any swatch in the swatch row. This switches **stopSelection** to `manual` and sets that stop as the base. The palette is immediately recomputed with your color placed at the chosen stop.
+
+You can also use the **stop selector** control (the dropdown next to the color picker) to choose any stop from 50 to 950 without clicking a swatch.
+
+<Note>
+  Once you switch to manual mode, changing the hex value will no longer recalculate the stop automatically. Click **Auto** in the stop selector to return to auto detection.
+</Note>
+
+## Palette name
+
+The **Name** input sets the key used in the generated Tailwind config. Names must be 3–24 alphabetic characters (hyphens allowed). For example, `brand`, `primary`, or `ocean-blue`. The name appears directly in the output:
+
+```json
+{
+  "colors": {
+    "brand": {
+      "50": "#F0F9FF",
+      ...
+    }
+  }
+}
+```

@@ -1,0 +1,135 @@
+---
+title: "Color output formats: oklch, hex, hsl, p-3"
+description: "The four color output formats in Tints.dev — oklch, hex, hsl, and display-p3 — and how to use the generated config in Tailwind v3 or v4."
+---
+
+Once your palette is ready, the output panel generates a Tailwind config snippet you can copy directly into your project. You can choose from four color formats and two Tailwind versions independently. The format selector and version selector are at the top of the output panel.
+
+## Available formats
+
+The four formats come from the `MODES` constant: `['oklch', 'hex', 'p-3', 'hsl']`. The default is **oklch**.
+
+### oklch (default)
+
+[OKLCH](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/oklch) is a perceptually uniform color space that is wide-gamut ready and designed for modern CSS. It is the recommended format for new Tailwind v4 projects.
+
+Syntax: `oklch(L C H / <alpha-value>)`
+
+- `L` — lightness (0–1)
+- `C` — chroma (distance from gray)
+- `H` — hue angle in degrees
+
+For near-grayscale colors where chroma is essentially zero, the generator automatically falls back to hex format to avoid rendering inconsistencies with zero-chroma OKLCH values.
+
+### hex
+
+Classic `#RRGGBB` format. Every browser and design tool supports it without exception. Use hex when you need maximum compatibility or are integrating with tools that do not support modern color spaces.
+
+Syntax: `#RRGGBB`
+
+### hsl
+
+Standard CSS HSL format. Supported by all modern browsers and easy to read and reason about. The alpha placeholder uses the Tailwind convention so opacity modifiers like `bg-brand-500/50` work correctly.
+
+Syntax: `hsl(H S% L% / <alpha-value>)`
+
+### p-3 (display-p3)
+
+The [display-p3](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color) color space covers a wider gamut than sRGB — approximately 25% more colors. Supported by Safari, Chrome, and Firefox on displays that can render it (most modern macOS and iOS displays). Falls back gracefully on unsupported displays.
+
+Syntax: `color(display-p3 R G B / <alpha-value>)`
+
+Values are normalized to the 0–1 range.
+
+## Format examples
+
+The following tabs show the same color (`#3B82F6`, Tailwind blue-500) rendered in each format:
+
+<Tabs>
+  <Tab title="oklch">
+    ```css
+    oklch(0.623 0.214 259.82 / <alpha-value>)
+    ```
+  </Tab>
+  <Tab title="hex">
+    ```css
+    #3B82F6
+    ```
+  </Tab>
+  <Tab title="hsl">
+    ```css
+    hsl(217.2 91.2% 59.8% / <alpha-value>)
+    ```
+  </Tab>
+  <Tab title="p-3">
+    ```css
+    color(display-p3 0.302 0.498 0.937 / <alpha-value>)
+    ```
+  </Tab>
+</Tabs>
+
+## Tailwind v3 vs v4 output
+
+The output panel supports both Tailwind v3 and v4 config syntax. Select the version using the **Tailwind CSS Version** radio buttons above the output block.
+
+<Tabs>
+  <Tab title="Tailwind v4">
+    Paste into the CSS file that contains your Tailwind configuration (the file where you import Tailwind):
+
+    ```css
+    @theme {
+      --color-brand-50: oklch(0.971 0.014 259.82);
+      --color-brand-100: oklch(0.936 0.032 259.82);
+      --color-brand-200: oklch(0.882 0.057 259.82);
+      --color-brand-300: oklch(0.809 0.101 259.82);
+      --color-brand-400: oklch(0.717 0.159 259.82);
+      --color-brand-500: oklch(0.623 0.214 259.82);
+      --color-brand-600: oklch(0.527 0.196 259.82);
+      --color-brand-700: oklch(0.433 0.163 259.82);
+      --color-brand-800: oklch(0.345 0.122 259.82);
+      --color-brand-900: oklch(0.267 0.082 259.82);
+      --color-brand-950: oklch(0.195 0.052 259.82);
+    }
+    ```
+
+    Alpha values are omitted in v4 output — Tailwind v4 handles opacity through its own CSS variable system.
+  </Tab>
+  <Tab title="Tailwind v3">
+    Paste into `tailwind.config.js` under `theme.extend.colors` (or `theme.colors` to replace defaults):
+
+    ```js
+    {
+      "colors": {
+        "brand": {
+          50: "oklch(0.971 0.014 259.82 / <alpha-value>)",
+          100: "oklch(0.936 0.032 259.82 / <alpha-value>)",
+          200: "oklch(0.882 0.057 259.82 / <alpha-value>)",
+          300: "oklch(0.809 0.101 259.82 / <alpha-value>)",
+          400: "oklch(0.717 0.159 259.82 / <alpha-value>)",
+          500: "oklch(0.623 0.214 259.82 / <alpha-value>)",
+          600: "oklch(0.527 0.196 259.82 / <alpha-value>)",
+          700: "oklch(0.433 0.163 259.82 / <alpha-value>)",
+          800: "oklch(0.345 0.122 259.82 / <alpha-value>)",
+          900: "oklch(0.267 0.082 259.82 / <alpha-value>)",
+          950: "oklch(0.195 0.052 259.82 / <alpha-value>)"
+        }
+      }
+    }
+    ```
+
+    The `<alpha-value>` placeholder is required for Tailwind's opacity modifier utilities (e.g. `bg-brand-500/75`) to work.
+  </Tab>
+</Tabs>
+
+## Format and browser support
+
+| Format | Browser support | Wide gamut | Tailwind v3 | Tailwind v4 |
+| ------ | --------------- | ---------- | ----------- | ----------- |
+| `oklch` | All modern browsers | Yes | Yes | Yes (recommended) |
+| `hex` | Universal | No (sRGB only) | Yes | Yes |
+| `hsl` | All modern browsers | No (sRGB only) | Yes | Yes |
+| `p-3` | Chrome, Safari, Firefox | Yes | Yes | Yes |
+
+<Note>
+  If you are targeting older browsers or tools that do not support modern CSS color functions, choose **hex** for maximum compatibility.
+</Note>

@@ -1,0 +1,79 @@
+---
+title: "HSL tweak controls: hue, saturation, lightness"
+description: "How the hue shift, saturation boost, and lightness min/max controls in Tints.dev adjust the shape of your generated color palette."
+---
+
+After the generator places your input color at its base stop, it distributes lightness across the remaining 10 stops using a linear interpolation. The four HSL tweak controls let you bend that curve — adding warmth at the extremes, boosting chromatic punch for near-gray colors, and controlling how close the lightest and darkest stops come to pure white and pure black.
+
+All four controls default to neutral values so the raw distribution is used until you decide to adjust.
+
+<Note>
+  Start with the defaults and adjust one control at a time. Small values (±5) already produce noticeable changes. See [how palettes work](/concepts/how-palettes-work) for a deeper explanation of the underlying math.
+</Note>
+
+## Hue shift (H)
+
+The **Hue** input shifts the hue of every stop away from the base stop. The further a stop is from the base, the larger the shift applied.
+
+Specifically, for each stop the algorithm calculates the number of index steps between that stop and the base stop, then multiplies by the `h` value to get a degree offset. A value of `5` shifts the stop that is two steps away by 10°, three steps away by 15°, and so on.
+
+```text
+h = 0   → all stops share the same hue as the input color (default)
+h = 5   → light stops shift slightly warm, dark stops shift slightly cool
+h = -5  → the opposite direction
+```
+
+**When to use it:** Hue shift is most noticeable on fully saturated colors. Adding a small positive value to a pure blue can make the lightest tints feel slightly purple-blue and the darkest shades feel slightly teal — mimicking the natural hue rotation found in many professional palettes.
+
+## Saturation boost (S)
+
+The **Saturation** input increases the saturation of stops that are far from the base. The boost grows non-linearly: a stop one step away gets a modest increase, but a stop five steps away gets substantially more.
+
+The formula used is:
+
+```text
+boost = (distance + 1) × s × (1 + distance / 10)
+```
+
+where `distance` is the number of index steps from the base stop. The boost is capped at 100 to stay within valid saturation range.
+
+```text
+s = 0   → saturation is not boosted at any stop (default)
+s = 5   → mild boost at the extremes
+s = 20  → strong boost — near-gray colors gain significant chroma at 50 and 950
+```
+
+**When to use it:** Low-saturation base colors (grays, off-whites, muted tones) often produce flat, lifeless palettes without a saturation boost. Adding `s = 10–20` gives the extremes a hint of the original hue, keeping the palette from looking purely neutral.
+
+## Lightness maximum (lMax)
+
+The **Lightness Maximum** input controls the lightness of stop 50 — the lightest stop in the palette. It is expressed as a percentage (0–100).
+
+```text
+lMax = 100  → stop 50 reaches maximum brightness (default)
+lMax = 90   → stop 50 is slightly off-white
+lMax = 70   → stop 50 is noticeably mid-light — the palette never gets very light
+```
+
+**When to use it:** If you want to prevent the lightest tints from washing out to near-white, lower `lMax`. This is useful for palettes that will be used on white backgrounds where very light tints are almost invisible.
+
+## Lightness minimum (lMin)
+
+The **Lightness Minimum** input controls the lightness of stop 950 — the darkest stop. It is also expressed as a percentage (0–100).
+
+```text
+lMin = 0    → stop 950 reaches minimum brightness (default)
+lMin = 10   → stop 950 is dark but not quite black
+lMin = 30   → stop 950 is a medium-dark shade
+```
+
+**When to use it:** Raise `lMin` if you want to prevent the darkest shades from becoming nearly indistinguishable from black. This preserves readability of white text on dark backgrounds across the lower stops.
+
+## Tweak reference
+
+| Control | Default | Range | Effect |
+| ------- | ------- | ----- | ------ |
+| `h` (Hue) | `0` | Any integer (degrees) | Rotates hue proportionally with distance from base stop |
+| `s` (Saturation) | `0` | `0–100` | Boosts saturation exponentially at stops far from base |
+| `lMax` (Lightness Maximum) | `100` | `0–100` | Sets the lightness ceiling for stop 50 |
+| `lMin` (Lightness Minimum) | `0` | `0–100` | Sets the lightness floor for stop 950 |

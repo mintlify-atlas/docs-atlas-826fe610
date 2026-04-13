@@ -1,0 +1,98 @@
+---
+title: "Sharing palettes with hash-based URLs in Tints.dev"
+description: "How Tints.dev encodes all palette settings into a hash-based URL so you can bookmark, share, and reload any palette exactly as you left it."
+---
+
+Every palette you create in Tints.dev is fully described by its URL. As you adjust hue, saturation, lightness, color mode, or base stop, the URL updates in real time. To share or save a palette, copy the browser URL — no account or export step required.
+
+## URL structure
+
+All palette URLs follow the same pattern, with a single hash segment that encodes every palette parameter:
+
+```
+https://tints.dev/palette/:hash
+```
+
+For example:
+
+```
+https://tints.dev/palette/v1:YmxhY2t8MDAwMDAwfDUwMHxwfDB8MHwwfDEwMHxh
+```
+
+The same hash works with the REST API:
+
+```
+https://tints.dev/api/palette/:hash
+```
+
+This means a URL you use in the browser can be passed directly to the API without any conversion.
+
+## What the hash encodes
+
+The hash captures every setting needed to reproduce a palette exactly:
+
+| Parameter | Description |
+|-----------|-------------|
+| `name` | Palette name |
+| `value` | Base hex color (without `#`) |
+| `valueStop` | The stop where the hex color appears |
+| `colorMode` | `perceived` (HSLuv) or `linear` (HSL) |
+| `h` | Hue tweak value |
+| `s` | Saturation tweak value |
+| `lMin` | Minimum lightness anchor |
+| `lMax` | Maximum lightness anchor |
+| `stopSelection` | `auto` or `manual` |
+
+## Hash encoding format
+
+The hash is constructed in three stages:
+
+<Steps>
+  <Step title="Serialize each palette">
+    Each palette's parameters are joined with `|` as the delimiter:
+
+    ```
+    name|value|valueStop|colorMode|h|s|lMin|lMax|stopSelection
+    ```
+
+    Color mode is compacted to a single character: `p` for perceived, `l` for linear. Stop selection is compacted similarly: `a` for auto, `m` for manual.
+  </Step>
+  <Step title="Join multiple palettes">
+    When more than one palette is active, each serialized palette is joined with `~`:
+
+    ```
+    palette1params~palette2params~palette3params
+    ```
+  </Step>
+  <Step title="Base64 encode with version prefix">
+    The joined string is Base64-encoded using URL-safe characters — `+` becomes `-` and `/` becomes `_`. Trailing `=` padding is stripped. A version prefix (`v1:`) is prepended for forward compatibility:
+
+    ```
+    v1:<url-safe-base64>
+    ```
+  </Step>
+</Steps>
+
+## Multiple palettes in one URL
+
+All active palettes are encoded into a single hash. If you have three palettes open, the URL encodes all three. Sharing that URL restores the complete multi-palette workspace.
+
+## Legacy URL format
+
+Older Tints.dev links used a simpler format with just a name and hex value:
+
+```
+https://tints.dev/:name/:value
+```
+
+For example:
+
+```
+https://tints.dev/brand/3B82F6
+```
+
+These URLs still work. Tints.dev automatically redirects them to the equivalent hash URL with a **301 permanent redirect**, so any bookmarks or shared links remain functional. The redirected URL uses default palette settings (stop 500, perceived mode, no HSL tweaks).
+
+<Note>
+  The hash URL is the canonical URL for every palette. It is the only URL format that preserves all of your settings — including hue and saturation tweaks, custom lightness bounds, and color mode. Always use the hash URL when bookmarking or sharing a palette you want to reload exactly.
+</Note>

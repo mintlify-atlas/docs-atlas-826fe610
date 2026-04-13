@@ -1,0 +1,51 @@
+---
+title: "Perceived vs linear color mode in Tints.dev"
+description: "Understand the difference between HSLuv perceived mode and standard HSL linear mode, and when each produces better Tailwind palette results."
+---
+
+Tints.dev offers two color modes that control how lightness is measured and distributed across the 11 palette stops. Choosing the right mode affects whether your palette looks visually balanced or whether the midtones appear more saturated and vivid. The default is **perceived** mode.
+
+## Perceived mode (HSLuv)
+
+In perceived mode, Tints.dev uses the [HSLuv](https://www.hsluv.org/) color space to measure and place lightness values. HSLuv is designed to match human color perception: two colors at the same HSLuv lightness level appear equally bright to the human eye, regardless of their hue.
+
+This matters because standard HSL treats hue and lightness independently, which means a pure yellow at 50% HSL lightness looks much brighter than a pure blue at the same value. HSLuv corrects for this perceptual imbalance.
+
+**Result:** Palettes in perceived mode are visually balanced. The steps between stops feel uniform — each step looks like roughly the same size jump in brightness. This makes it easier to use adjacent stops for accessible contrast ratios.
+
+**When to use it:** Use perceived mode for most palettes, especially for UI colors where contrast ratios and visual hierarchy matter. It is the recommended default.
+
+## Linear mode (HSL)
+
+In linear mode, Tints.dev uses standard HSL to measure and distribute lightness. Lightness is taken directly from the color's HSL representation without perceptual correction.
+
+**Result:** Palettes in linear mode can appear more saturated and vivid, particularly in the midrange stops (300–700). The tradeoff is that the perceived brightness jumps between stops are less uniform — some steps will look larger than others.
+
+**When to use it:** Switch to linear mode if you want richer, more chromatic midtones and the subtle perceptual imbalance is acceptable for your use case. It can work well for decorative or illustrative palettes where pure contrast is less critical than vibrancy.
+
+## Switching modes
+
+The color mode toggle is the **Perceived / Linear** switch on the right side of the tweak controls row. Flipping the switch immediately recomputes all 11 swatches using the new mode.
+
+<Tip>
+  Try switching modes with the same base color and tweak settings to see the difference directly. Saturated hues like red, yellow, and green show the most noticeable change — linear mode will produce notably more vivid midtones for these colors.
+</Tip>
+
+## Effect on stop auto-detection
+
+The color mode also affects how the generator determines which stop your input color belongs to in auto mode:
+
+- **Perceived** — stop is selected based on WCAG relative luminance (the perceptual brightness used for contrast calculations).
+- **Linear** — stop is selected based on raw HSL lightness.
+
+Switching modes while a color is loaded will therefore update both the swatch distribution and the active base stop.
+
+## Summary
+
+| | Perceived (HSLuv) | Linear (HSL) |
+| --- | --- | --- |
+| Lightness model | Perceptually uniform | Raw HSL lightness |
+| Visual balance | High — steps look even | Lower — midtones can look heavier |
+| Midtone vibrancy | Moderate | Higher |
+| Default | Yes | No |
+| Best for | UI, accessibility-sensitive palettes | Decorative, vibrant palettes |

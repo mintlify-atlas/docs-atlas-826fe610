@@ -1,0 +1,88 @@
+---
+title: "Tints.dev REST API: Tailwind palette generation"
+description: "Generate 11-stop Tailwind CSS palettes via REST API — no authentication required. Supports oklch, hex, hsl, and display-p3 output formats."
+---
+
+The Tints.dev REST API lets you programmatically generate 11-stop color palettes from a single hex value. It requires no API key, no account, and no configuration — send a request and get a JSON palette back. All responses are cached for one week at both the client and CDN level.
+
+## Available endpoints
+
+The API exposes two main endpoints. Use whichever fits your workflow:
+
+| Endpoint | Method | Description |
+|---|---|---|
+| `/api/:name/:value` | GET | Generate a palette by name and hex value — redirects (301) to the hash URL |
+| `/api/palette/:hash` | GET | Fetch a palette by its encoded hash — the canonical, cacheable form |
+
+For new integrations, prefer `/api/palette/:hash`. The name/value endpoint redirects permanently to a hash URL, so you can use it once to discover the hash and then use the hash URL directly in your code.
+
+## Response format
+
+All endpoints return a JSON object. Keys are color names; values are objects mapping stop numbers to color strings. Stop numbers follow the Tailwind CSS palette convention: `50`, `100`, `200`, `300`, `400`, `500`, `600`, `700`, `800`, `900`, and `950`.
+
+```bash
+curl "https://tints.dev/api/palette/v1:Ymx1ZXwzQjgyRjZ8NTAwfHB8MHwwfDB8MTAwfGE"
+```
+
+```json
+{
+  "blue": {
+    "50": "oklch(0.968 0.027 264.05 / <alpha-value>)",
+    "100": "oklch(0.938 0.05 264.05 / <alpha-value>)",
+    "200": "oklch(0.882 0.076 264.05 / <alpha-value>)",
+    "300": "oklch(0.809 0.105 264.05 / <alpha-value>)",
+    "400": "oklch(0.714 0.143 264.05 / <alpha-value>)",
+    "500": "oklch(0.623 0.178 264.05 / <alpha-value>)",
+    "600": "oklch(0.546 0.183 264.05 / <alpha-value>)",
+    "700": "oklch(0.457 0.17 264.05 / <alpha-value>)",
+    "800": "oklch(0.379 0.136 264.05 / <alpha-value>)",
+    "900": "oklch(0.313 0.103 264.05 / <alpha-value>)",
+    "950": "oklch(0.248 0.08 264.05 / <alpha-value>)"
+  }
+}
+```
+
+The `<alpha-value>` placeholder is compatible with Tailwind CSS's opacity modifier syntax (e.g., `bg-blue-500/50`).
+
+## Output format
+
+Control the color format with the `?output` query parameter. The default is `oklch`.
+
+| Value | Format | Example |
+|---|---|---|
+| `oklch` (default) | OKLCH | `oklch(0.623 0.178 264.05 / <alpha-value>)` |
+| `hex` | Hex | `#3b82f6` |
+| `hsl` | HSL | `hsl(217 91% 60% / <alpha-value>)` |
+| `p-3` | Display P3 | `color(display-p3 0.23 0.51 0.96 / <alpha-value>)` |
+
+```bash
+curl "https://tints.dev/api/palette/v1:Ymx1ZXwzQjgyRjZ8NTAwfHB8MHwwfDB8MTAwfGE?output=hex"
+```
+
+## Caching
+
+Every API response includes the following headers:
+
+```
+Cache-Control: max-age=604800, s-maxage=604800
+Content-Type: application/json; charset=utf-8
+```
+
+Responses are cached for one week (604,800 seconds) at both the client and edge/CDN level. Cache the responses in your own application to avoid redundant requests.
+
+## Explore the endpoints
+
+<CardGroup cols={2}>
+  <Card title="GET /api/:name/:value" icon="arrow-right" href="/api/get-palette-by-name-value">
+    Generate a palette by name and hex value. Redirects to the canonical hash URL.
+  </Card>
+  <Card title="GET /api/palette/:hash" icon="link" href="/api/get-palette-by-hash">
+    Fetch a palette using its encoded hash — the stable, cacheable endpoint.
+  </Card>
+  <Card title="Query parameters" icon="sliders" href="/api/query-parameters">
+    Full reference for the `?output` and `?colors` query parameters.
+  </Card>
+  <Card title="Authentication" icon="lock-open" href="/api/authentication">
+    No API key required — the API is open and free to use.
+  </Card>
+</CardGroup>

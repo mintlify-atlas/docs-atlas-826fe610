@@ -1,80 +1,155 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: "Get started: generate your first Tailwind palette"
+description: "Learn how to generate an 11-stop Tailwind CSS color palette from a hex value and copy it into your Tailwind v3 or v4 project config."
 ---
 
-## Get started in three steps
+This page walks you through generating a palette on [tints.dev](https://tints.dev) and adding it to a Tailwind CSS project. The entire process takes under two minutes. For a programmatic approach, see the [API alternative](#use-the-api-instead) section below.
 
-Get your documentation site running locally and make your first customization.
+<Steps>
 
-### Step 1: Set up your local environment
+<Step title="Open the generator and enter your hex color">
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+Go to [tints.dev](https://tints.dev). A random palette loads automatically so you can see the output format straight away.
 
-### Step 2: Deploy your changes
+In the color input field, type your base hex color without the `#` prefix — for example, `3B82F6` for a blue. Press **Enter** or click away to generate the palette.
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+By default, the input color is placed at stop `500`. To place it at a different stop, open the stop selector and choose any value from `50` to `950`.
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+</Step>
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+<Step title="Adjust HSL tweaks (optional)">
 
-### Step 3: Go live
+The three optional sliders let you fine-tune the palette:
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+- **Hue shift** — rotates the hue away from the base color as stops move toward the extremes. Useful for saturated colors that look more natural with a slight hue arc.
+- **Saturation boost** — increases saturation at the lightest and darkest stops to keep the palette vivid rather than washed out.
+- **Lightness range** — sets the minimum and maximum lightness values. Narrowing the range keeps the extremes from becoming pure white or pure black.
 
-## Next steps
+Leave all three at their defaults if you want a straightforward scale with no adjustments.
 
-Now that you have your docs running, explore these key features:
+</Step>
 
-<CardGroup cols={2}>
+<Step title="Choose your output format and Tailwind version">
 
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
+Use the **Format** selector to pick the CSS color format for the generated values:
 
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
+| Format | Best for |
+|---|---|
+| `oklch` | Tailwind v4, modern browsers, widest gamut |
+| `hex` | Maximum compatibility |
+| `hsl` | Readable HSL values |
+| `p-3` | Display P3 wide-gamut screens |
 
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
+Use the **Version** toggle to switch between Tailwind v3 and v4 output syntax. The generated snippet changes accordingly.
 
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
+</Step>
 
-</CardGroup>
+<Step title="Copy the generated config snippet">
+
+Click the **Copy** button beneath the palette preview. The snippet is copied to your clipboard in the correct format for your chosen Tailwind version and output format.
+
+</Step>
+
+<Step title="Paste into your Tailwind config">
+
+<Tabs>
+  <Tab title="Tailwind v3">
+    Open your `tailwind.config.js` file and merge the palette into the `theme.colors` (or `theme.extend.colors`) object:
+
+    ```js tailwind.config.js
+    /** @type {import('tailwindcss').Config} */
+    module.exports = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              50:  "#EFF6FF",
+              100: "#DBEAFE",
+              200: "#BFDBFE",
+              300: "#93C5FD",
+              400: "#60A5FA",
+              500: "#3B82F6",
+              600: "#2563EB",
+              700: "#1D4ED8",
+              800: "#1E40AF",
+              900: "#1E3A8A",
+              950: "#172554",
+            },
+          },
+        },
+      },
+    }
+    ```
+
+    Using `theme.extend.colors` keeps all of Tailwind's built-in colors intact and adds (or overrides) only the named palette you paste in.
+  </Tab>
+  <Tab title="Tailwind v4">
+    Open your main CSS file (commonly `app.css` or `globals.css`) and add the palette inside an `@theme` block:
+
+    ```css app.css
+    @import "tailwindcss";
+
+    @theme {
+      --color-blue-50:  oklch(97.1% 0.013 247.9);
+      --color-blue-100: oklch(93.5% 0.032 254.9);
+      --color-blue-200: oklch(87.1% 0.065 258.3);
+      --color-blue-300: oklch(78.8% 0.115 261.2);
+      --color-blue-400: oklch(70.7% 0.165 261.4);
+      --color-blue-500: oklch(63.3% 0.189 259.8);
+      --color-blue-600: oklch(54.6% 0.187 258.3);
+      --color-blue-700: oklch(45.3% 0.174 256.8);
+      --color-blue-800: oklch(37.2% 0.148 255.1);
+      --color-blue-900: oklch(29.2% 0.113 253.5);
+      --color-blue-950: oklch(22.0% 0.078 252.0);
+    }
+    ```
+
+    Tailwind v4 reads CSS custom properties from `@theme` directly — no JavaScript config file needed.
+  </Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## Use the API instead
+
+If you need to generate palettes programmatically — for example in a build script, design tool plugin, or CI pipeline — use the Tints.dev REST API. It requires no API key or account.
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+  The API currently generates palettes from a base hex value using default settings. HSL tweaks configured in the web generator are not applied to API responses.
 </Note>
+
+Fetch a palette by name and hex value:
+
+```bash
+curl "https://tints.dev/api/blue/3B82F6"
+```
+
+The response is a JSON object with stops as keys:
+
+```json
+{
+  "blue": {
+    "50":  "oklch(97.1% 0.013 247.9)",
+    "100": "oklch(93.5% 0.032 254.9)",
+    "200": "oklch(87.1% 0.065 258.3)",
+    "300": "oklch(78.8% 0.115 261.2)",
+    "400": "oklch(70.7% 0.165 261.4)",
+    "500": "oklch(63.3% 0.189 259.8)",
+    "600": "oklch(54.6% 0.187 258.3)",
+    "700": "oklch(45.3% 0.174 256.8)",
+    "800": "oklch(37.2% 0.148 255.1)",
+    "900": "oklch(29.2% 0.113 253.5)",
+    "950": "oklch(22.0% 0.078 252.0)"
+  }
+}
+```
+
+Pass the `output` query parameter to change the format:
+
+```bash
+curl "https://tints.dev/api/blue/3B82F6?output=hex"
+```
+
+See the [API reference](/api/introduction) for all endpoints, parameters, and response shapes.

@@ -1,0 +1,88 @@
+---
+title: "Tints.dev API query parameters: output format options"
+description: "Complete reference for all query parameters supported by the Tints.dev API, including the output format parameter and its accepted values with examples."
+---
+
+The Tints.dev API accepts query parameters that control the color format returned in palette responses. This page documents every supported parameter, its accepted values, and example output for each option.
+
+## `output` parameter
+
+<ParamField query="output" type="string" default="oklch">
+  Controls the color format of every stop value in the response. Applies to `GET /api/palette/:hash`. Accepted values: `oklch` (default), `hex`, `hsl`, `p-3`.
+</ParamField>
+
+The examples below show the output for stop `500` of a blue palette with base color `#3B82F6`.
+
+<Tabs>
+  <Tab title="oklch">
+    ```bash
+    curl "https://tints.dev/api/palette/v1:Ymx1ZXwzQjgyRjZ8NTAwfHB8MHwwfDB8MTAwfGE"
+    ```
+
+    ```json
+    {
+      "blue": {
+        "500": "oklch(0.623 0.214 264.05 / <alpha-value>)"
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="hex">
+    ```bash
+    curl "https://tints.dev/api/palette/v1:Ymx1ZXwzQjgyRjZ8NTAwfHB8MHwwfDB8MTAwfGE?output=hex"
+    ```
+
+    ```json
+    {
+      "blue": {
+        "500": "#3B82F6"
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="hsl">
+    ```bash
+    curl "https://tints.dev/api/palette/v1:Ymx1ZXwzQjgyRjZ8NTAwfHB8MHwwfDB8MTAwfGE?output=hsl"
+    ```
+
+    ```json
+    {
+      "blue": {
+        "500": "hsl(217.2 91.2% 59.8% / <alpha-value>)"
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="p-3">
+    ```bash
+    curl "https://tints.dev/api/palette/v1:Ymx1ZXwzQjgyRjZ8NTAwfHB8MHwwfDB8MTAwfGE?output=p-3"
+    ```
+
+    ```json
+    {
+      "blue": {
+        "500": "color(display-p3 0.231 0.510 0.965 / <alpha-value>)"
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+  The `<alpha-value>` placeholder in `oklch`, `hsl`, and `p-3` output is a CSS custom property slot used by Tailwind CSS's opacity modifier syntax. For example, `text-blue-500/50` replaces `<alpha-value>` with `0.5` at build time, producing a 50% opacity variant without needing a separate color definition.
+</Note>
+
+## Format comparison
+
+| Value | Color space | Example for `#3B82F6` |
+|---|---|---|
+| `oklch` (default) | OKLCH | `oklch(0.623 0.214 264.05 / <alpha-value>)` |
+| `hex` | sRGB hex | `#3B82F6` |
+| `hsl` | HSL | `hsl(217.2 91.2% 59.8% / <alpha-value>)` |
+| `p-3` | Display P3 | `color(display-p3 0.231 0.510 0.965 / <alpha-value>)` |
+
+`oklch` is the recommended default for Tailwind v4 projects, as it offers the widest gamut and most perceptually-uniform interpolation. For Tailwind v3 or environments that do not support OKLCH, use `hex`.
+
+<Note>
+  For near-grayscale colors — those with a chroma value below `0.001` in the OKLCH color space — the API automatically falls back to hex notation even when `output=oklch` is requested. This avoids invalid or visually misleading OKLCH values for colors where the hue channel carries no meaningful information.
+</Note>

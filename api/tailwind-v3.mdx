@@ -1,0 +1,125 @@
+---
+title: "Using Tints.dev palettes in Tailwind CSS v3"
+description: "Copy the generated JSON config block from Tints.dev and paste it into tailwind.config.js to extend or replace the default Tailwind v3 color palette."
+---
+
+Tints.dev generates a ready-to-use JSON color object that plugs directly into your `tailwind.config.js` file. You can extend Tailwind's built-in colors with your custom palette or replace them entirely — using whichever output format (oklch, hex, hsl, or display-p3) suits your project.
+
+## What the v3 output looks like
+
+When you switch to the **v3** tab in the generator output panel, Tints.dev produces a JSON object with a `colors` key. For a `blue` palette based on `#3B82F6`, it looks like this:
+
+```json
+{
+  "colors": {
+    "blue": {
+      50: "#EFF6FF",
+      100: "#DBEAFE",
+      200: "#BFDBFE",
+      300: "#93C5FD",
+      400: "#60A5FA",
+      500: "#3B82F6",
+      600: "#2563EB",
+      700: "#1D4ED8",
+      800: "#1E40AF",
+      900: "#1E3A8A",
+      950: "#172554"
+    }
+  }
+}
+```
+
+The stop numbers (`50` through `950`) match Tailwind's standard palette structure, so your generated palette is a drop-in replacement or extension.
+
+## Workflow
+
+<Steps>
+  <Step title="Generate your palette">
+    Open [tints.dev](https://tints.dev), enter your hex color, and adjust the hue, saturation, and lightness controls until you're happy with the result.
+  </Step>
+  <Step title="Select the output color mode">
+    In the **Output color mode** selector, choose one of `oklch`, `hex`, `hsl`, or `p-3`. Hex is the most universally compatible choice for Tailwind v3.
+  </Step>
+  <Step title="Select Tailwind CSS version 3">
+    In the **Tailwind CSS Version** selector, choose **3**. The output panel will update to show the JSON config format.
+  </Step>
+  <Step title="Copy the config">
+    Click the copy button in the output panel to copy the full JSON object to your clipboard.
+  </Step>
+  <Step title="Paste into tailwind.config.js">
+    Open your `tailwind.config.js` file and paste the colors into either `theme.extend.colors` (to add alongside defaults) or `theme.colors` (to replace defaults entirely). See the examples below.
+  </Step>
+</Steps>
+
+## Extending the default palette
+
+Use `theme.extend.colors` to add your custom palette alongside Tailwind's built-in colors. This is the most common approach — it keeps all of Tailwind's default colors available while adding or overriding specific ones.
+
+```js tailwind.config.js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        blue: {
+          50: "#EFF6FF",
+          100: "#DBEAFE",
+          200: "#BFDBFE",
+          300: "#93C5FD",
+          400: "#60A5FA",
+          500: "#3B82F6",
+          600: "#2563EB",
+          700: "#1D4ED8",
+          800: "#1E40AF",
+          900: "#1E3A8A",
+          950: "#172554",
+        },
+      },
+    },
+  },
+}
+```
+
+## Replacing the default palette
+
+If you want to use only your custom colors and remove Tailwind's defaults, place the colors under `theme.colors` instead of `theme.extend.colors`.
+
+<Warning>
+  Placing colors in `theme.colors` (not `theme.extend.colors`) removes **all** of Tailwind's built-in color utilities. Only the colors you define will be available. Use `theme.extend.colors` if you want to keep the defaults.
+</Warning>
+
+```js tailwind.config.js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  theme: {
+    colors: {
+      blue: {
+        50: "#EFF6FF",
+        100: "#DBEAFE",
+        200: "#BFDBFE",
+        300: "#93C5FD",
+        400: "#60A5FA",
+        500: "#3B82F6",
+        600: "#2563EB",
+        700: "#1D4ED8",
+        800: "#1E40AF",
+        900: "#1E3A8A",
+        950: "#172554",
+      },
+    },
+  },
+}
+```
+
+## Output color format options
+
+Tints.dev supports four output formats for Tailwind v3. Select the format in the **Output color mode** selector before copying.
+
+| Mode | Example value | Notes |
+|---|---|---|
+| `oklch` | `oklch(0.623 0.178 264.05 / <alpha-value>)` | Perceptually uniform; requires CSS Color Level 4 support |
+| `hex` | `#3B82F6` | Maximum browser compatibility; no opacity modifier support |
+| `hsl` | `hsl(217 91% 60% / <alpha-value>)` | Human-readable; widely supported |
+| `p-3` | `color(display-p3 0.23 0.51 0.96 / <alpha-value>)` | Wide gamut; for P3-capable displays |
+
+The `<alpha-value>` placeholder is used by Tailwind's opacity modifier syntax (e.g., `bg-blue-500/50`). Hex values do not support this syntax — if you need opacity modifiers, use `oklch` or `hsl` instead.

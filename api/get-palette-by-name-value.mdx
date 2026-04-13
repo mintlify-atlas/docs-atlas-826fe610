@@ -1,0 +1,54 @@
+---
+title: "GET /api/:name/:value — named palette endpoint"
+description: "Send a color name and hex value to receive a 301 redirect to the canonical hash-based palette URL. No auth required, works with any HTTP client."
+---
+
+The `/api/:name/:value` endpoint accepts a color name and a six-character hex value, generates the corresponding palette, and immediately returns a permanent `301` redirect to the canonical hash-based URL at `/api/palette/:hash`. Use this endpoint when you know a color name and value and want to discover its stable hash URL, then use that hash URL for all subsequent requests.
+
+## Endpoint
+
+```
+GET https://tints.dev/api/:name/:value
+```
+
+## Path parameters
+
+<ParamField path="name" type="string" required>
+  The name to assign to this palette. Must contain only letters or hyphens and be between 3 and 24 characters. Regex: `/^[A-Za-z-]{3,24}$/i`. Example: `blue`
+</ParamField>
+
+<ParamField path="value" type="string" required>
+  The base hex color without the leading `#`, exactly 6 hexadecimal characters. Example: `3B82F6`
+</ParamField>
+
+## Behavior
+
+When both parameters are valid, the API generates the 11-stop palette for the given color and returns a `301 Moved Permanently` redirect to `/api/palette/:hash`. The hash encodes the full palette state — name, value, stop position, HSL adjustments, and color mode — so the hash URL is stable and safe to cache indefinitely.
+
+If your HTTP client does not follow redirects automatically, you will receive the `Location` header pointing to the hash URL. You can then use that URL directly in your code.
+
+## Error responses
+
+| Status | Reason |
+|---|---|
+| `404 Not Found` | `name` or `value` is missing, `name` does not match `/^[A-Za-z-]{3,24}$/i`, or `value` is not a valid 6-character hex string |
+
+## Example request
+
+```bash
+curl -L "https://tints.dev/api/blue/3B82F6"
+```
+
+<Note>
+  The `-L` flag tells curl to follow the `301` redirect to the hash-based URL. Without it, curl returns the redirect response without fetching the palette JSON. To see the hash URL without following it, omit `-L` and inspect the `Location` response header.
+</Note>
+
+## Example redirect response
+
+```
+HTTP/2 301
+location: https://tints.dev/api/palette/v1:Ymx1ZXwzQjgyRjZ8NTAwfHB8MHwwfDB8MTAwfGE
+cache-control: public, max-age=31536000
+```
+
+After following the redirect, the final response is a JSON palette object. See [GET /api/palette/:hash](/api/get-palette-by-hash) for the full response shape and available query parameters.

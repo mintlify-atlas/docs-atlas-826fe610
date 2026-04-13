@@ -1,0 +1,95 @@
+---
+title: "Using Tints.dev palettes in Tailwind CSS v4"
+description: "Paste the @theme CSS block from Tints.dev into your main CSS file to integrate a custom color palette with Tailwind CSS v4's native CSS-first config."
+---
+
+Tailwind CSS v4 moves configuration out of `tailwind.config.js` and into CSS. Instead of a JavaScript object, you define custom design tokens — including colors — using `@theme` blocks directly in your stylesheet. Tints.dev generates the correct `@theme` syntax so you can copy and paste without any manual conversion.
+
+## What the v4 output looks like
+
+When you switch to the **v4** tab in the generator output panel, Tints.dev produces a `@theme` block with CSS custom property declarations. For a `blue` palette, it looks like this:
+
+```css
+@theme {
+  --color-blue-50: oklch(0.968 0.027 264.05);
+  --color-blue-100: oklch(0.938 0.05 264.05);
+  --color-blue-200: oklch(0.882 0.08 264.05);
+  --color-blue-300: oklch(0.803 0.124 264.05);
+  --color-blue-400: oklch(0.707 0.165 264.05);
+  --color-blue-500: oklch(0.623 0.214 264.05);
+  --color-blue-600: oklch(0.546 0.185 264.05);
+  --color-blue-700: oklch(0.468 0.155 264.05);
+  --color-blue-800: oklch(0.393 0.125 264.05);
+  --color-blue-900: oklch(0.317 0.094 264.05);
+  --color-blue-950: oklch(0.248 0.08 264.05);
+}
+```
+
+The variable names follow Tailwind v4's `--color-{name}-{stop}` convention, so the utilities `bg-blue-500`, `text-blue-700`, and so on are available automatically after pasting.
+
+Note that the v4 output strips the `/ <alpha-value>` placeholder that appears in API responses. Tailwind v4 handles opacity modifiers differently and does not require the placeholder in `@theme` declarations.
+
+<Tip>
+  oklch is the recommended format for Tailwind v4. It's the native format for modern CSS color and aligns with how Tailwind v4's own built-in palette is defined, giving you perceptually consistent color across the whole scale.
+</Tip>
+
+## Workflow
+
+<Steps>
+  <Step title="Generate your palette">
+    Open [tints.dev](https://tints.dev), enter your hex color, and adjust the controls until the palette looks right.
+  </Step>
+  <Step title="Select oklch as the output color mode">
+    In the **Output color mode** selector, choose `oklch`. This is the recommended format for Tailwind v4 and produces the most consistent results.
+  </Step>
+  <Step title="Select Tailwind CSS version 4">
+    In the **Tailwind CSS Version** selector, choose **4**. The output panel switches to the `@theme` CSS block format.
+  </Step>
+  <Step title="Copy the @theme block">
+    Click the copy button in the output panel to copy the full `@theme` block to your clipboard.
+  </Step>
+  <Step title="Paste into your CSS file">
+    Open the CSS file that contains your `@import "tailwindcss"` directive and paste the `@theme` block anywhere in that file. Tailwind will pick it up automatically.
+  </Step>
+</Steps>
+
+## Where to paste the block
+
+Paste the `@theme` block into your main CSS entry point — the file that includes `@import "tailwindcss"`. A typical v4 CSS file looks like this after pasting:
+
+```css globals.css
+@import "tailwindcss";
+
+@theme {
+  --color-blue-50: oklch(0.968 0.027 264.05);
+  --color-blue-100: oklch(0.938 0.05 264.05);
+  --color-blue-200: oklch(0.882 0.08 264.05);
+  --color-blue-300: oklch(0.803 0.124 264.05);
+  --color-blue-400: oklch(0.707 0.165 264.05);
+  --color-blue-500: oklch(0.623 0.214 264.05);
+  --color-blue-600: oklch(0.546 0.185 264.05);
+  --color-blue-700: oklch(0.468 0.155 264.05);
+  --color-blue-800: oklch(0.393 0.125 264.05);
+  --color-blue-900: oklch(0.317 0.094 264.05);
+  --color-blue-950: oklch(0.248 0.08 264.05);
+}
+```
+
+## Extending vs. overriding
+
+In Tailwind v4, custom `@theme` variables extend the default palette rather than replacing it. If you define `--color-blue-500`, it overrides only that specific token; the rest of Tailwind's built-in colors remain unchanged.
+
+To remove a built-in color entirely, set its value to `initial`:
+
+```css globals.css
+@theme {
+  /* Override the blue palette with your custom values */
+  --color-blue-50: oklch(0.968 0.027 264.05);
+  /* ... */
+
+  /* Remove a built-in color you don't want */
+  --color-purple-*: initial;
+}
+```
+
+For most projects, the default extending behavior is what you want — you get your custom colors plus all of Tailwind's defaults.

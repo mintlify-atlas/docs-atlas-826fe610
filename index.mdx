@@ -1,97 +1,61 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Tints.dev: Tailwind CSS Palette Generator and API"
+description: "Generate perceptually-consistent 11-stop color palettes for Tailwind CSS from a single hex value, with HSL tweaking controls and a REST API."
 ---
 
-## Setting up
+Tints.dev is a free palette generator and REST API that creates complete 11-stop color palettes (50–950) from a single hex color value. Designed for Tailwind CSS workflows, it outputs ready-to-use config for both Tailwind v3 and v4, with support for oklch, hsl, hex, and display-p3 color formats.
 
-Get your documentation site up and running in minutes.
-
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Generate your first palette and copy it into your Tailwind config in minutes.
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Using the Generator" icon="palette" href="/generator/overview">
+    Learn how to use the palette generator, adjust HSL parameters, and export results.
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="API Reference" icon="code" href="/api/introduction">
+    Programmatically generate palettes via the REST API — no auth required.
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="Palette Concepts" icon="lightbulb" href="/concepts/how-palettes-work">
+    Understand how Tints.dev generates perceptually-balanced color scales.
   </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## What Tints.dev does
 
-Everything you need to create world-class documentation.
+Starting from a single hex color, Tints.dev generates a full 11-stop palette spanning from near-white (50) to near-black (950) — the same range used by Tailwind CSS's built-in color palette. It uses either HSLuv (perceived) or standard HSL (linear) color math to distribute lightness evenly across stops.
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
+<CardGroup cols={2}>
+  <Card title="11 color stops" icon="swatchbook">
+    Generates stops 50, 100, 200, 300, 400, 500, 600, 700, 800, 900, and 950 — matching Tailwind's palette structure.
   </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
+  <Card title="HSL tweaking" icon="sliders">
+    Shift hue, boost saturation, and control min/max lightness to fine-tune your palette.
   </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
+  <Card title="Multiple formats" icon="file-code">
+    Export as oklch, hex, hsl, or display-p3. Choose Tailwind v3 or v4 config syntax.
   </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
+  <Card title="REST API" icon="server">
+    Fetch any palette programmatically — useful for design tools, scripts, and CI pipelines.
   </Card>
-</Columns>
+</CardGroup>
 
-## Need inspiration?
+## Get started
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<Steps>
+  <Step title="Open the generator">
+    Go to [tints.dev](https://tints.dev) — a random palette loads automatically.
+  </Step>
+  <Step title="Enter your hex color">
+    Type your brand color as a 6-character hex value (without `#`) into the color input field.
+  </Step>
+  <Step title="Adjust the palette">
+    Use the hue, saturation, and lightness controls to fine-tune the output. Switch between perceived and linear color modes.
+  </Step>
+  <Step title="Copy your config">
+    Select your Tailwind version (v3 or v4) and output format, then copy the generated config snippet into your project.
+  </Step>
+</Steps>
+
+<Tip>
+  You can also use the [REST API](/api/introduction) to fetch palettes programmatically — no API key required.
+</Tip>

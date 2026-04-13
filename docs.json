@@ -1,122 +1,78 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "Tints.dev",
+  "theme": "willow",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#f1c92b",
+    "light": "#52370a",
+    "dark": "#fbeacf"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "https://media.brand.dev/c88d4d48-ccd0-464d-8c64-036da35c6745.png",
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/SimeonGriggs/tints.dev"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/SimeonGriggs/tints.dev"
+    }
+  },
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Documentation",
         "groups": [
           {
-            "group": "Getting started",
+            "group": "Get Started",
+            "pages": ["introduction", "quickstart"]
+          },
+          {
+            "group": "Using the Generator",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "generator/overview",
+              "generator/color-input",
+              "generator/hsl-tweaks",
+              "generator/color-modes",
+              "generator/output-formats"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Palette Concepts",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
-            ]
-          },
-          {
-            "group": "Writing content",
-            "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
-            ]
-          },
-          {
-            "group": "AI tools",
-            "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
+              "concepts/how-palettes-work",
+              "concepts/stops-and-swatches",
+              "concepts/sharing-palettes"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
+        "tab": "API Reference",
         "groups": [
           {
-            "group": "API documentation",
+            "group": "Overview",
+            "pages": ["api/introduction", "api/authentication"]
+          },
+          {
+            "group": "Endpoints",
             "pages": [
-              "api-reference/introduction"
+              "api/get-palette-by-name-value",
+              "api/get-palette-by-hash",
+              "api/query-parameters"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Integration",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api/tailwind-v3",
+              "api/tailwind-v4",
+              "api/examples"
             ]
           }
         ]
       }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
-  },
-  "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
-  },
-  "contextual": {
-    "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
-  },
-  "footer": {
-    "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
-    }
+    ]
   }
 }

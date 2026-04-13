@@ -1,0 +1,116 @@
+---
+title: "GET /api/palette/:hash — hash-based palette API"
+description: "Fetch a fully generated 11-stop Tailwind CSS palette by its encoded hash. Supports oklch, hex, hsl, and display-p3 output. Cached for one week."
+---
+
+The `/api/palette/:hash` endpoint is the canonical, stable form of the Tints.dev API. The hash encodes the full palette state — name, base color, stop position, HSL adjustments, and color mode — so the same hash always produces the same palette. Responses are cached for one week at both the client and CDN level, making this endpoint safe to call frequently without performance concerns.
+
+## Endpoint
+
+```
+GET https://tints.dev/api/palette/:hash
+```
+
+## Parameters
+
+<ParamField path="hash" type="string" required>
+  A Base64-encoded palette state string starting with `v1:`. You can obtain a hash by following the redirect from [`GET /api/:name/:value`](/api/get-palette-by-name-value) or by copying the hash segment from the URL on [tints.dev](https://tints.dev). Example: `v1:Ymx1ZXwzQjgyRjZ8NTAwfHB8MHwwfDB8MTAwfGE`
+</ParamField>
+
+<ParamField query="output" type="string" default="oklch">
+  Color format for all stop values in the response. Accepted values: `oklch` (default), `hex`, `hsl`, `p-3`. See [Query parameters](/api/query-parameters) for format examples.
+</ParamField>
+
+## Response
+
+The response is a JSON object. Each key is a palette name; its value is an object mapping stop numbers to color strings in the requested format. Stops follow the Tailwind CSS palette convention: `50`, `100`, `200`, `300`, `400`, `500`, `600`, `700`, `800`, `900`, and `950`.
+
+### Response fields
+
+<ResponseField name="{palette name}" type="object">
+  An object keyed by the palette's color name (for example, `blue`).
+
+  <Expandable title="stop properties">
+    <ResponseField name="50" type="string">
+      Color value at stop 50 in the requested output format.
+    </ResponseField>
+    <ResponseField name="100" type="string">
+      Color value at stop 100.
+    </ResponseField>
+    <ResponseField name="200" type="string">
+      Color value at stop 200.
+    </ResponseField>
+    <ResponseField name="300" type="string">
+      Color value at stop 300.
+    </ResponseField>
+    <ResponseField name="400" type="string">
+      Color value at stop 400.
+    </ResponseField>
+    <ResponseField name="500" type="string">
+      Color value at stop 500.
+    </ResponseField>
+    <ResponseField name="600" type="string">
+      Color value at stop 600.
+    </ResponseField>
+    <ResponseField name="700" type="string">
+      Color value at stop 700.
+    </ResponseField>
+    <ResponseField name="800" type="string">
+      Color value at stop 800.
+    </ResponseField>
+    <ResponseField name="900" type="string">
+      Color value at stop 900.
+    </ResponseField>
+    <ResponseField name="950" type="string">
+      Color value at stop 950.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Response headers
+
+```
+Content-Type: application/json; charset=utf-8
+Cache-Control: max-age=604800, s-maxage=604800
+```
+
+Responses are cached for one week (604,800 seconds) at both the client and edge/CDN level.
+
+## Error responses
+
+| Status | Reason |
+|---|---|
+| `400 Bad Request` | The `hash` parameter is present but cannot be decoded or is otherwise invalid |
+| `404 Not Found` | The `hash` parameter is missing from the URL |
+
+## Example requests
+
+```bash
+# Default output (oklch)
+curl "https://tints.dev/api/palette/v1:Ymx1ZXwzQjgyRjZ8NTAwfHB8MHwwfDB8MTAwfGE"
+
+# Hex format
+curl "https://tints.dev/api/palette/v1:Ymx1ZXwzQjgyRjZ8NTAwfHB8MHwwfDB8MTAwfGE?output=hex"
+```
+
+## Example response
+
+The following example shows the response for `?output=hex`:
+
+```json
+{
+  "blue": {
+    "50": "#EFF6FF",
+    "100": "#DBEAFE",
+    "200": "#BFDBFE",
+    "300": "#93C5FD",
+    "400": "#60A5FA",
+    "500": "#3B82F6",
+    "600": "#2563EB",
+    "700": "#1D4ED8",
+    "800": "#1E40AF",
+    "900": "#1E3A8A",
+    "950": "#172554"
+  }
+}
+```

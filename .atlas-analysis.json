@@ -1,0 +1,87 @@
+{
+  "projectType": "saas",
+  "projectName": "Tints.dev",
+  "projectDescription": "An 11-swatch Tailwind CSS palette generator and REST API that creates perceptually-consistent color palettes from a single hex value with HSL tweaking controls.",
+  "theme": "willow",
+  "primaryColor": "#f1c92b",
+  "lightColor": "#52370a",
+  "darkColor": "#fbeacf",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": ["introduction", "quickstart"]
+          },
+          {
+            "group": "Using the Generator",
+            "pages": [
+              "generator/overview",
+              "generator/color-input",
+              "generator/hsl-tweaks",
+              "generator/color-modes",
+              "generator/output-formats"
+            ]
+          },
+          {
+            "group": "Palette Concepts",
+            "pages": [
+              "concepts/how-palettes-work",
+              "concepts/stops-and-swatches",
+              "concepts/sharing-palettes"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["api/introduction", "api/authentication"]
+          },
+          {
+            "group": "Endpoints",
+            "pages": [
+              "api/get-palette-by-name-value",
+              "api/get-palette-by-hash",
+              "api/query-parameters"
+            ]
+          },
+          {
+            "group": "Integration",
+            "pages": [
+              "api/tailwind-v3",
+              "api/tailwind-v4",
+              "api/examples"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "11-stop color palette generation (50–950) from a single hex value",
+    "HSL tweaking controls: hue shift, saturation boost, min/max lightness",
+    "Two color modes: perceived (HSLuv) and linear (HSL)",
+    "Multiple output formats: oklch, hex, hsl, display-p3",
+    "Tailwind CSS v3 and v4 config output",
+    "Shareable palette URLs via base64-encoded hash",
+    "REST API for programmatic palette generation",
+    "Multiple simultaneous palette support",
+    "Auto stop-selection based on color lightness/luminance"
+  ],
+  "publicApiSurface": [
+    "GET /api?colors[name]=value — Query-based palette generation",
+    "GET /api/:name/:value — Named palette by hex (redirects to hash URL)",
+    "GET /api/palette/:hash — Hash-based palette retrieval",
+    "GET /api/palette/:hash?output=oklch|hex|hsl|p-3 — Output format control",
+    "createSwatches(palette: PaletteConfig) — Core swatch generation function",
+    "serializePalette(palette: PaletteEssentials): string — Palette serialization",
+    "deserializePalette(hash: string): PaletteConfig | null — Palette deserialization",
+    "output(palettes: PaletteConfig[], mode: Mode) — Format palette for Tailwind config",
+    "createDisplayColor(color: string, mode?: Mode, alphaPlaceholder?: boolean): string | null"
+  ]
+}
